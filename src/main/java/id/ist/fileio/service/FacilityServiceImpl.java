@@ -2,18 +2,18 @@ package id.ist.fileio.service;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.annotation.PostConstruct;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import id.ist.fileio.exception.FacilityException;
+import id.ist.fileio.exception.FacilityNotFoundException;
 import id.ist.fileio.model.Facility;
 import lombok.extern.slf4j.Slf4j;
 
@@ -41,66 +41,6 @@ public class FacilityServiceImpl implements FacilityService {
 		return file;
 	}
 
-	public boolean addFile(Facility facil) {
-		boolean facilAdd = false;
-		try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(checkFiles()))) {
-			facilAdd = facils.add(facil);
-			os.writeObject(facils);
-		} catch (IOException e) {
-			throw new FacilityException(e.getMessage(), e);
-		} finally {
-			return facilAdd;
-		}
-	}
-
-	public Facility editFile(int index, Facility facil) {
-		Facility facilUpdt = null;
-		index = index - 1;
-		try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(checkFiles()))) {
-			facilUpdt = facils.set(index, facil);
-			os.writeObject(facils);
-		} catch (IOException e) {
-			throw new FacilityException(e.getMessage(), e);
-		} finally {
-			return facilUpdt;
-		}
-	}
-
-	public void deleteOne(int index) {
-		try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(checkFiles()))) {
-			Facility facil1 = get(index);
-
-			if (facil1 != null) {
-				facils.remove(facil1);
-				os.writeObject(facils);
-			} else {
-				log.error("Unable to find id (index)");
-			}
-		} catch (IOException e) {
-			throw new FacilityException(e.getMessage(), e);
-		}
-	}
-
-	@Override
-	public Facility get(int index) {
-		Facility getFacil = null;
-		try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(checkFiles()))) {
-			int size = readFile().size() - 1;
-			index = index - 1;
-
-			if (index > size) {
-				log.info("Out of bond (index) - get one facility");
-				return getFacil;
-			}
-			
-			getFacil = facils.get(index);
-			return getFacil;
-			
-		} catch (IOException e) {
-			throw new FacilityException(e.getMessage(), e);
-		}
-	}
-
 	@SuppressWarnings("unchecked")
 	@PostConstruct
 	public List<Facility> readFile() {
@@ -112,6 +52,32 @@ public class FacilityServiceImpl implements FacilityService {
 			log.info("finally ~ read data");
 			return facils;
 		}
+	}
+	
+	public Boolean addFile(Facility facil) {
+		return facils.add(facil);
+	}
+
+	public Facility editFile(Long id, Facility facilNew) {
+		Facility facil = findById(id);
+		BeanUtils.copyProperties(facilNew, facil);
+		return facilNew;
+	}
+
+	public void deleteOne(Long id) {
+		Facility facility = findById(id);
+		facils.remove(facility);
+	}
+	
+	public List<Facility> findAll(){
+		return facils;
+	}
+	
+	public Facility findById(Long id) {
+		return facils.stream()
+				.filter(e -> e.getId().equals(id))
+				.findFirst()
+				.orElseThrow(FacilityNotFoundException::new);
 	}
 
 }

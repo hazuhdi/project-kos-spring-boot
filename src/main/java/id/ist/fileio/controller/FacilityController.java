@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import id.ist.fileio.model.Facility;
@@ -21,15 +22,15 @@ import lombok.extern.slf4j.Slf4j;
 
 @RestController
 @Slf4j
+@RequestMapping(path = "/facilities")
 public class FacilityController {
 
 	@Autowired
 	FacilityService facilityService;
 
-	@GetMapping(value = "/facilities")
+	@GetMapping
 	public ResponseEntity<List<Facility>> getAllFacility() {
-		log.info("tes controller");
-		List<Facility> facils = facilityService.readFile();
+		List<Facility> facils = facilityService.findAll();
 		if (facils.isEmpty()) {
 			log.info("Data Not Found");
 		}
@@ -37,21 +38,21 @@ public class FacilityController {
 		return new ResponseEntity<>(facils, responseHTTPStatus);
 	}
 
-	@GetMapping(value = "/facilities/get/{id}")
-	public ResponseEntity<Facility> getFacilById(@PathVariable int id) {
-		Facility facil = facilityService.get(id);
+	@GetMapping(path = "/get/{id}")
+	public ResponseEntity<Facility> getFacilById(@PathVariable Long id) {
+		Facility facil = facilityService.findById(id);
 		HttpStatus responseHTTPStatus = (facil != null) ? HttpStatus.OK : HttpStatus.NO_CONTENT;
 		return new ResponseEntity<>(facil, responseHTTPStatus);
 	}
 
-	@DeleteMapping(value = "facilities/delete/{id}")
-	public ResponseEntity<HttpStatus> deleteOneFacility(@PathVariable int id) {
+	@DeleteMapping(path = "/delete/{id}")
+	public ResponseEntity<HttpStatus> deleteOneFacility(@PathVariable Long id) {
 		facilityService.deleteOne(id);
 		return ResponseEntity.ok(HttpStatus.OK);
 
 	}
 
-	@PostMapping(value = "/facilities/add")
+	@PostMapping(path = "/add")
 	public ResponseEntity<Facility> addFacility(@RequestBody @Valid Facility facil) {
 		Boolean add = facilityService.addFile(facil);
 		HttpStatus responseHTTPStatus = (add == Boolean.TRUE) ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
@@ -59,8 +60,8 @@ public class FacilityController {
 	}
 	
 
-	@PutMapping(value = "/facilities/update/{id}")
-	public ResponseEntity<Facility> updateFacility(@PathVariable int id, @RequestBody @Valid Facility facil) {
+	@PutMapping(path = "/update/{id}")
+	public ResponseEntity<Facility> updateFacility(@PathVariable Long id, @RequestBody @Valid Facility facil) {
 //		Facility facilCheck = facilityService.get(id);
 //		List<Facility> facilUpdt = ;
 		facilityService.editFile(id, facil);

@@ -7,9 +7,10 @@ import id.ist.fileio.model.Facility;
 
 public interface FacilityService {
 	public File checkFiles();
-	public boolean addFile(Facility facil);
-	public Facility editFile(int id, Facility facil);
-	public void deleteOne(int index);
-	public Facility get(int id);
+	public Boolean addFile(Facility facil);
+	public Facility editFile(Long id, Facility facil);
+	public void deleteOne(Long index);
+	public Facility findById(Long id);
 	public List<Facility> readFile();
+	public List<Facility> findAll();
 }
