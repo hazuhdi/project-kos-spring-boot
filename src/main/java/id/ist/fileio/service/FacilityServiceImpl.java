@@ -9,6 +9,8 @@ import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.stereotype.Service;
 
 import id.ist.fileio.exception.FacilityException;
@@ -22,7 +24,7 @@ public class FacilityServiceImpl implements FacilityService {
 	private static final String KEY_APP_DIR = "FACILITY_SPRING";
 	private static final String DEFAULT_DIR = "C:/FacilitySpring";
 
-	private static List<Facility> facils = new ArrayList<>();
+	private List<Facility> facils = new ArrayList<>();
 
 	public File checkFiles() {
 		String dirPath = System.getProperty(KEY_APP_DIR, DEFAULT_DIR);
@@ -39,102 +41,77 @@ public class FacilityServiceImpl implements FacilityService {
 		return file;
 	}
 
-	public List<Facility> addFile(Facility facil) {
-
+	public boolean addFile(Facility facil) {
+		boolean facilAdd = false;
 		try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(checkFiles()))) {
-			facils.add(facil);
+			facilAdd = facils.add(facil);
 			os.writeObject(facils);
 		} catch (IOException e) {
 			throw new FacilityException(e.getMessage(), e);
 		} finally {
-			return facils;
+			return facilAdd;
 		}
 	}
 
-	public List<Facility> editFile(int index, Facility facil) {
-
+	public Facility editFile(int index, Facility facil) {
+		Facility facilUpdt = null;
+		index = index - 1;
 		try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(checkFiles()))) {
-			int size = readFile().size() - 1;
-			index = index - 1;
-
-			if (index <= size) {
-				facils.set(index, facil);
-				os.writeObject(facils);
-			} else {
-				System.out.println();
-				System.out.println("Unable to find id (index)!");
-				System.out.println();
-			}
+			facilUpdt = facils.set(index, facil);
+			os.writeObject(facils);
 		} catch (IOException e) {
 			throw new FacilityException(e.getMessage(), e);
 		} finally {
-			return facils;
+			return facilUpdt;
 		}
 	}
 
-	public List<Facility> deleteOne(int index) {
+	public void deleteOne(int index) {
 		try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(checkFiles()))) {
-			int size = readFile().size() - 1;
-			index = index - 1;
+			Facility facil1 = get(index);
 
-			if (index <= size) {
-				facils.remove(index);
+			if (facil1 != null) {
+				facils.remove(facil1);
 				os.writeObject(facils);
 			} else {
-				System.out.println();
-				System.out.println("Unable to find id (index)");
-				System.out.println();
+				log.error("Unable to find id (index)");
 			}
 		} catch (IOException e) {
 			throw new FacilityException(e.getMessage(), e);
-		} finally {
-			return facils;
 		}
 	}
 
 	@Override
-	public Facility get(long index) {
+	public Facility get(int index) {
 		Facility getFacil = null;
 		try (ObjectOutputStream os = new ObjectOutputStream(new FileOutputStream(checkFiles()))) {
 			int size = readFile().size() - 1;
 			index = index - 1;
 
-			if (index <= size) {
-				getFacil = facils.get((int) index);
-			} else {
-				log.info("Unable to find id (index) - get one facility");
+			if (index > size) {
+				log.info("Out of bond (index) - get one facility");
+				return getFacil;
 			}
-			os.writeObject(facils);
+			
+			getFacil = facils.get(index);
+			return getFacil;
+			
 		} catch (IOException e) {
 			throw new FacilityException(e.getMessage(), e);
-		} finally {
-			return getFacil;
 		}
 	}
 
 	@SuppressWarnings("unchecked")
+	@PostConstruct
 	public List<Facility> readFile() {
 		try (ObjectInputStream is = new ObjectInputStream(new FileInputStream(checkFiles()))) {
-			log.info("inside try");
 			facils = (List<Facility>) is.readObject();
-			File file = checkFiles();
-			if (file.exists()) {
-				log.info("There is no data input yet : " + file);
-			} else {
-				log.info("File Found");
-			}
 		} catch (IOException e) {
 			throw new FacilityException(e.getMessage(), e);
 		} finally {
-			log.info("finally read data");
+			log.info("finally ~ read data");
 			return facils;
 		}
-	}
-
-	@Override
-	public List<Facility> editFile(long id, Facility facil) {
-		// TODO Auto-generated method stub
-		return null;
 	}
 
 }
