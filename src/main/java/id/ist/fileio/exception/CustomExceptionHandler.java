@@ -33,6 +33,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
         responseBody.put("errors", errors);
 
-		return new ResponseEntity<>(responseBody, headers, HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(responseBody, headers, status);
 	}
 }
