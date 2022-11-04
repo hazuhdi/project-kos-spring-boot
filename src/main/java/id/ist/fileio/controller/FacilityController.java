@@ -1,6 +1,7 @@
 package id.ist.fileio.controller;
 
 import java.util.List;
+import java.util.Objects;
 
 import javax.validation.Valid;
 
@@ -23,8 +24,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.fge.jsonpatch.JsonPatch;
 import com.github.fge.jsonpatch.JsonPatchException;
 
+import id.ist.fileio.dto.FacilityDto;
 import id.ist.fileio.model.Facility;
 import id.ist.fileio.service.FacilityService;
+import id.ist.fileio.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @RestController
@@ -63,19 +66,22 @@ public class FacilityController {
 	}
 
 	@PostMapping(path = "/add")
-	public ResponseEntity<Facility> addFacility(@RequestBody @Valid Facility facil) {
-		Boolean add = facilityService.addFile(facil);
+	public ResponseEntity<Facility> addFacility(@RequestBody @Valid FacilityDto facilDto) {
+		Objects.requireNonNull(facilDto);
+		Facility facility = new Facility();
+		ObjectUtils.copyProperties(facility, facilDto);
+		Boolean add = facilityService.addFile(facility);
 		HttpStatus responseHTTPStatus = (add == Boolean.TRUE) ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
-		return new ResponseEntity<>(facil, responseHTTPStatus);
+		return new ResponseEntity<>(facility, responseHTTPStatus);
 	}
 	
 
 	@PutMapping(path = "/update/{id}")
 	public ResponseEntity<Facility> updateFacility(@PathVariable Long id, @RequestBody @Valid Facility facil) {
-//		Facility facilCheck = facilityService.get(id);
-//		List<Facility> facilUpdt = ;
+		Objects.requireNonNull(facil);
+		Facility facility = new Facility();
+		ObjectUtils.copyProperties(facility, facil);
 		facilityService.editFile(id, facil);
-//		HttpStatus responseHTTPStatus = (facilCheck != null) ? HttpStatus.OK: HttpStatus.NO_CONTENT;
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	

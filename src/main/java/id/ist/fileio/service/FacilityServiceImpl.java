@@ -9,12 +9,12 @@ import java.util.List;
 
 import javax.annotation.PostConstruct;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 
 import id.ist.fileio.exception.FacilityException;
 import id.ist.fileio.exception.FacilityNotFoundException;
 import id.ist.fileio.model.Facility;
+import id.ist.fileio.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
 
 @SuppressWarnings("finally")
@@ -55,12 +55,14 @@ public class FacilityServiceImpl implements FacilityService {
 	}
 	
 	public Boolean addFile(Facility facil) {
+		Long lastId = facils.stream().map(Facility::getId).max(Long::compare).orElse(1L);
+		facil.setId(lastId+1);
 		return facils.add(facil);
 	}
 
 	public Facility editFile(Long id, Facility facilNew) {
 		Facility facil = findById(id);
-		BeanUtils.copyProperties(facilNew, facil);
+		ObjectUtils.copyProperties(facilNew, facil);
 		return facilNew;
 	}
 
