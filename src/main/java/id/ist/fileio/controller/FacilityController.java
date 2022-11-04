@@ -77,16 +77,16 @@ public class FacilityController {
 	
 
 	@PutMapping(path = "/update/{id}")
-	public ResponseEntity<Facility> updateFacility(@PathVariable Long id, @RequestBody @Valid Facility facil) {
-		Objects.requireNonNull(facil);
+	public ResponseEntity<Facility> updateFacility(@PathVariable Long id, @RequestBody @Valid FacilityDto facilDto) {
+		Objects.requireNonNull(facilDto);
 		Facility facility = new Facility();
-		ObjectUtils.copyProperties(facility, facil);
-		facilityService.editFile(id, facil);
+		ObjectUtils.copyProperties(facility, facilDto);
+		facilityService.editFile(id, facility);
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 	
 	@PatchMapping(path = "/patch/{id}", consumes = "application/json-patch+json")
-	public Facility updateCustomer(@PathVariable Long id, @RequestBody JsonPatch patch) {
+	public Facility patchFacility(@PathVariable Long id, @RequestBody JsonPatch patch) {
 	    try {
 	        Facility facility = facilityService.findById(id);
 	        JsonNode patched = patch.apply(objectMapper.convertValue(facility, JsonNode.class));

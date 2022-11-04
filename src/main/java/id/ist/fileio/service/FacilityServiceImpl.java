@@ -62,7 +62,8 @@ public class FacilityServiceImpl implements FacilityService {
 
 	public Facility editFile(Long id, Facility facilNew) {
 		Facility facil = findById(id);
-		ObjectUtils.copyProperties(facilNew, facil);
+		facilNew.setId(facil.getId());
+		ObjectUtils.copyProperties(facil, facilNew);
 		return facilNew;
 	}
 
