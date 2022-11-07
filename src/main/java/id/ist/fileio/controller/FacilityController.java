@@ -70,9 +70,8 @@ public class FacilityController {
 		Objects.requireNonNull(facilDto);
 		Facility facility = new Facility();
 		ObjectUtils.copyProperties(facility, facilDto);
-		Boolean add = facilityService.addFile(facility);
-		HttpStatus responseHTTPStatus = (add == Boolean.TRUE) ? HttpStatus.OK : HttpStatus.BAD_REQUEST;
-		return new ResponseEntity<>(facility, responseHTTPStatus);
+		facilityService.addFile(facility);
+		return new ResponseEntity<>(facility, HttpStatus.OK);
 	}
 	
 
