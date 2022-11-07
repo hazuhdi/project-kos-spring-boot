@@ -91,13 +91,9 @@ public class FacilityServiceImpl implements FacilityService {
 	}
 
 	public Facility findById(Long id) {
-		Facility facil = facils.stream().filter(e -> e.getId().equals(id)).findFirst().orElseThrow(CustomErrorException::new);
+		return facils.stream().filter(e -> e.getId().equals(id)).findFirst()
+				.orElseThrow(() -> new CustomErrorException("HAZ001", "Facility with id that you search didnt exist"));
 
-		if (facil.getId() != null) {
-			throw new CustomErrorException("HAZ001", "Facility with id that you search didnt exist", id);
-
-		}
-		return facil;
 	}
 
 }

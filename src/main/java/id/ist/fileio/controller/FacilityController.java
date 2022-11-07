@@ -54,15 +54,13 @@ public class FacilityController {
 	@GetMapping(path = "/get/{id}")
 	public ResponseEntity<Facility> getFacilById(@PathVariable Long id) {
 		Facility facil = facilityService.findById(id);
-		HttpStatus responseHTTPStatus = (facil != null) ? HttpStatus.OK : HttpStatus.NO_CONTENT;
-		return new ResponseEntity<>(facil, responseHTTPStatus);
+		return new ResponseEntity<>(facil,HttpStatus.OK);
 	}
 
 	@DeleteMapping(path = "/delete/{id}")
 	public ResponseEntity<HttpStatus> deleteOneFacility(@PathVariable Long id) {
 		facilityService.deleteOne(id);
 		return ResponseEntity.ok(HttpStatus.OK);
-
 	}
 
 	@PostMapping(path = "/add")

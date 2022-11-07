@@ -13,23 +13,14 @@ public class CustomErrorException extends RuntimeException {
 	private static final long serialVersionUID = 4562498202822327091L;
 	
 	private String errCode;
-	private Object data;
+	private String message;
 
-	public CustomErrorException() {
-		super();
+	protected CustomErrorException() {
 	}
 
-	public CustomErrorException(String message) {
-		super(message);
-	}
 
 	public CustomErrorException(String errCode, String message) {
-		this(message);
 		this.errCode = errCode;
-	}
-
-	public CustomErrorException(String errCode, String message, Object data) {
-		this(errCode, message);
-		this.data = data;
+		this.message = message;
 	}
 }

@@ -19,12 +19,11 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
 
 	@ExceptionHandler(CustomErrorException.class)
-	public ErrorResponse handleCustomErrorException(Exception e) {
-		CustomErrorException customErrorException = (CustomErrorException) e;
+	public final ResponseEntity<Object> handleCustomErrorException(CustomErrorException e) {
+		CustomErrorExceptionSchema exceptionResponse = new CustomErrorExceptionSchema(e.getErrCode()
+				, e.getMessage());
 
-		String status = customErrorException.getErrCode();
-
-		return new ErrorResponse(status, customErrorException.getMessage());
+		return new ResponseEntity<>(exceptionResponse,HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 
 	@Override

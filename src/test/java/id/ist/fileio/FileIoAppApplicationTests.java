@@ -42,7 +42,7 @@ class FileIoAppApplicationTests {
 	
 	@Test
 	@SneakyThrows
-	void givenNullPrice_whenAddFacility_thenReturnFail() {
+	void givenNullPrice_whenAddFacility_thenReturnBadReq() {
 		RestTemplate restTemplate = new RestTemplate();
 		final String baseUrl = "http://localhost:" + port + "/facilities/add";
 		URI uri = new URI(baseUrl);
@@ -64,7 +64,7 @@ class FileIoAppApplicationTests {
 	
 	@Test
 	@SneakyThrows
-	void givenNullName_whenAddFacility_thenReturnFail() {
+	void givenNullName_whenAddFacility_thenReturnBadReq() {
 		RestTemplate restTemplate = new RestTemplate();
 		final String baseUrl = "http://localhost:" + port + "/facilities/add";
 		URI uri = new URI(baseUrl);
