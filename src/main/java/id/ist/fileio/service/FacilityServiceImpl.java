@@ -13,8 +13,8 @@ import javax.annotation.PostConstruct;
 
 import org.springframework.stereotype.Service;
 
+import id.ist.fileio.exception.CustomErrorException;
 import id.ist.fileio.exception.FacilityException;
-import id.ist.fileio.exception.FacilityNotFoundException;
 import id.ist.fileio.model.Facility;
 import id.ist.fileio.utils.ObjectUtils;
 import lombok.extern.slf4j.Slf4j;
@@ -74,7 +74,7 @@ public class FacilityServiceImpl implements FacilityService {
 
 	public Facility editFile(Long id, Facility facilNew) {
 		Facility facil = findById(id);
-		facilNew.setId(facil.getId());
+		facilNew.setId((facil).getId());
 		ObjectUtils.copyProperties(facil, facilNew);
 		writeFile();
 		return facilNew;
@@ -91,8 +91,13 @@ public class FacilityServiceImpl implements FacilityService {
 	}
 
 	public Facility findById(Long id) {
-		return facils.stream().filter(e -> e.getId().equals(id)).findFirst()
-				.orElseThrow(FacilityNotFoundException::new);
+		Facility facil = facils.stream().filter(e -> e.getId().equals(id)).findFirst().orElseThrow(CustomErrorException::new);
+
+		if (facil.getId() != null) {
+			throw new CustomErrorException("HAZ001", "Facility with id that you search didnt exist", id);
+
+		}
+		return facil;
 	}
 
 }
