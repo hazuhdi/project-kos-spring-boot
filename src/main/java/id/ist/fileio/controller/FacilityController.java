@@ -28,10 +28,8 @@ import id.ist.fileio.dto.FacilityDto;
 import id.ist.fileio.model.Facility;
 import id.ist.fileio.service.FacilityService;
 import id.ist.fileio.utils.ObjectUtils;
-import lombok.extern.slf4j.Slf4j;
 
 @RestController
-@Slf4j
 @RequestMapping(path = "/facilities")
 public class FacilityController {
 
@@ -43,10 +41,7 @@ public class FacilityController {
 
 	@GetMapping
 	public ResponseEntity<List<Facility>> getAllFacility() {
-		List<Facility> facils = facilityService.findAll();
-		if (facils.isEmpty()) {
-			log.info("Data Not Found");
-		}
+		List<Facility> facils = facilityService.findAll();	
 		HttpStatus responseHTTPStatus = (!facils.isEmpty()) ? HttpStatus.OK : HttpStatus.NO_CONTENT;
 		return new ResponseEntity<>(facils, responseHTTPStatus);
 	}
